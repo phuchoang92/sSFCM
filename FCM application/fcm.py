@@ -2,9 +2,6 @@ import pandas as pd
 import numpy as np
 from random import random
 
-
-
-
 # Load data from .....
 def loadData(s):
     global data
