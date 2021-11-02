@@ -206,7 +206,6 @@ class App(QMainWindow):
                 ktra = np.less_equal(delta_V, Epsilon)
                 if np.all(ktra):
                     break
-            print("\n------------------------------------\nKetqua\n")
 
         thuat_toan(1e-6, value_m)
 
