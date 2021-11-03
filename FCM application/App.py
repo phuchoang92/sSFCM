@@ -125,16 +125,21 @@ class App(QMainWindow):
 
 
     def get_data_file(self):
-        path, _ = QFileDialog.getOpenFileName(self, 'Open File', options=QFileDialog.DontUseNativeDialog)
-        self.textEdit.setText(path)
-        data = pd.read_csv(path, header=None)
-        data = data.select_dtypes(include=["float64", "int64"])
-        self.X = np.array(data)
-        self.n_rows = self.X.shape[0]
-        self.n_cols = self.X.shape[1]
-        model_x = TableModel(self.X)
-        self.table_x.setModel(model_x)
-        self.table_x.resizeColumnsToContents()
+        
+        try :
+            path, _ = QFileDialog.getOpenFileName(self, 'Open File', options=QFileDialog.DontUseNativeDialog)
+            self.textEdit.setText(path)
+            data = pd.read_csv(path, header=None)
+            data = data.select_dtypes(include=["float64", "int64"])
+            self.X = np.array(data)
+            self.n_rows = self.X.shape[0]
+            self.n_cols = self.X.shape[1]
+            model_x = TableModel(self.X)
+            self.table_x.setModel(model_x)
+            self.table_x.resizeColumnsToContents()
+        except:
+            self.error_dialog = QtWidgets.QErrorMessage()
+            self.error_dialog.showMessage('Please choose a data set !')
 
     def generate_U_ngang(self):
         text1 = self.input3.text()
