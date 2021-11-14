@@ -175,7 +175,11 @@ class App(QMainWindow):
             msg.exec_()
 
     def generate_clusters(self):
-
+        
+        self.rand_value_box.clear()
+        self.adjusted_value_box.clear()
+        self.jaccard_value_box.clear()
+        
         if self.input1.text() != '':
             value_m = int(self.input1.text())
             self.V_var = np.random.rand(self.number_of_cluster, self.n_cols)
