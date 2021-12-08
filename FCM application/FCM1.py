@@ -199,6 +199,5 @@ class FCM1():
         print(self.V)
         self.count_class(self.num_class, c)
         self.external_validity(self.num_class, c)
-        self.Meam_accuraccy()
         self.rs_dict_cluster()
         return
