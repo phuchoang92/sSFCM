@@ -145,7 +145,6 @@ class FCM2():
             self.count_class(self.num_class, self.c)
             self.external_validity(self.num_class, self.c)       
    
-     
 
 
 
