@@ -33,11 +33,16 @@ class FCM2():
         self.index_x_giamsat = random.sample(range(self.n),k)
         index_x_giamsat = np.sort(self.index_x_giamsat)
         for i in range(self.n):
-            for j in range(self.c):
-                self.M[i,j]=m
             if i in index_x_giamsat:
-                c1=random.randint(0,c-1)
-                self.M[i,c1]=m1
+                if len(self.dict_cluster) == 0 :
+                    c1= random.randint(0,self.c-1)
+                else:
+                    c1= self.dict_cluster[self.label_data[i]]
+                    #Chọn vị trí cụm giám sát
+                self.M[i] = m
+                self.M[i][c1] = m1
+            else:
+                self.M[i] = m
     def generate_V(self,c):
         self.V=np.random.rand(self.c,self.p)
         self.V_truoc=self.V
@@ -53,7 +58,7 @@ class FCM2():
         vp = pow(1/(m1*d_ik*d_ik),1/(m1-1))
         vt = -1
         left = 0.0
-        right = 1.0
+        right = 2.0
         while (abs(vt-vp) > epsilon):
             mu = (right + left)/2
             vt = mu/pow(mu + sum_mu_i, (m1-m)/(m1-1))  
@@ -79,9 +84,10 @@ class FCM2():
                 sum_mu_i=sum(mu_i)
                 for j in range(self.c):
                     if (self.M[i][j]==m1):
-                        mu_i[j] = self.solve_mu(sum_mu_i,d_i[j],m,m1,epsilon)
-                    for j in range(c) : 
-                        self.U[i][j] = mu_i[j]/sum(mu_i)
+                        mu_i[j] = self.solve_mu(sum_mu_i, d_i[j], m, m1 , epsilon)
+                        # mu_i[j] = sum_mu_i
+                        
+                self.U[i] = mu_i/sum(mu_i)
     def update_V(self,c):
         V_temp=np.zeros((self.c,self.p))
         for k in range(self.c):
@@ -109,11 +115,7 @@ class FCM2():
                     c1+=self.count_class_cluster[i][k] * self.count_class_cluster[j][k]
                     for h in range(c):
                         if h!=k :
-                            d1+=self.count_class_cluster[i][k] * self.count_class_cluster[j][h]  
-        print("a1= "+str(a1))
-        print("b1= "+str(b1))
-        print("c1= "+str(c1))
-        print("d1= "+str(d1))
+                            d1+=self.count_class_cluster[i][k] * self.count_class_cluster[j][h] 
         # Rand int
         w1 =  (a1 + d1)/ (a1 +b1 + c1 +d1)
         # Adjusted Rand Index
@@ -121,17 +123,46 @@ class FCM2():
         w2 = (a1 - (a1+c1)*(a1+b1)/M) /( (2*a1+b1+c1)/2 - (a1+c1)*(a1+b1)/M )
         #Jaccard Coefficient
         w3 = a1 / (a1+b1+c1)
-        print ("Rand Index :" +str(w1))
-        print ("Adjusted Rand Index :" + str(w2))
-        print ("Jaccard Coefficient" +str(w3))   
         self.w1=w1
         self.w2=w2
         self.w3=w3
-    def thuat_toan(self,m,m1,c,k,epsilon):
+        
+        
+    def set_dict_cluster(self):
+        for i in range(self.num_class):
+            temp = np.argmax(self.count_class_cluster[i])
+            self.dict_cluster[self.label_list[i]] = temp
+        return
+
+    def rs_dict_cluster(self):
+        self.dict_cluster = {}
+        return   
+    
+    def thuat_toan_1_pha(self,m,m1,c,k,epsilon):
         self.setC(c)
         self.generate_V(c)
         self.generate_U(c)
+        Epsilon = np.zeros((self.c,self.p)) + epsilon
+        self.rs_dict_cluster()
         self.generate_M(m,m1,k,c)
+        while True:
+            self.update_U(m,m1,c,epsilon)
+            self.V_truoc=self.V
+            self.V=self.update_V(c)
+            delta_V=abs(self.V-self.V_truoc)
+            ktra = np.less_equal(delta_V, Epsilon)
+            if (np.all(ktra)):
+                break
+        self.count_class(self.num_class, self.c)
+        self.external_validity(self.num_class, self.c)       
+            
+            
+    def thuat_toan_2_pha(self,m,m1,c,k,epsilon):
+        self.setC(c)
+        self.generate_V(c)
+        V_temp= self.V
+        self.generate_U(c)
+        self.generate_M(m,m1,0,c)
         Epsilon = np.zeros((self.c,self.p)) + epsilon
         while True:
             self.update_U(m,m1,c,epsilon)
@@ -141,11 +172,22 @@ class FCM2():
             ktra = np.less_equal(delta_V, Epsilon)
             if (np.all(ktra)):
                 break
-            print(self.V)
-            self.count_class(self.num_class, self.c)
-            self.external_validity(self.num_class, self.c)       
-   
-
+        self.count_class(self.num_class, self.c)
+        self.set_dict_cluster()     
+            #Pha 2
+        self.V = V_temp  
+        self.generate_M(m,m1,k,c)
+        while True:
+            self.update_U(m,m1,c,epsilon)
+            self.V_truoc=self.V
+            self.V=self.update_V(c)
+            delta_V=abs(self.V-self.V_truoc)
+            ktra = np.less_equal(delta_V, Epsilon)
+            if (np.all(ktra)):
+                break
+        self.count_class(self.num_class, self.c)
+        self.external_validity(self.num_class, self.c)     
+        return
 
 
 

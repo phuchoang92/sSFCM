@@ -12,6 +12,7 @@ class FCM1():
     def __init__(self, *args, **kwargs):
         self.dict_cluster = {}
         self.c = 0
+        self.X = np.zeros(1)
         return
         
     def read_data(self, path):
@@ -108,11 +109,7 @@ class FCM1():
                     c1+=self.count_class_cluster[i][k] * self.count_class_cluster[j][k]
                     for h in range(c):
                         if h!=k :
-                            d1+=self.count_class_cluster[i][k] * self.count_class_cluster[j][h]  
-        print("a1= "+str(a1))
-        print("b1= "+str(b1))
-        print("c1= "+str(c1))
-        print("d1= "+str(d1))
+                            d1+=self.count_class_cluster[i][k] * self.count_class_cluster[j][h]
         # Rand int
         w1 =  (a1 + d1)/ (a1 +b1 + c1 +d1)
         # Adjusted Rand Index
@@ -120,16 +117,9 @@ class FCM1():
         w2 = (a1 - (a1+c1)*(a1+b1)/M) /( (2*a1+b1+c1)/2 - (a1+c1)*(a1+b1)/M )
         #Jaccard Coefficient
         w3 = a1 / (a1+b1+c1)
-        print ("Rand Index :" +str(w1))
-        print ("Adjusted Rand Index :" + str(w2))
-        print ("Jaccard Coefficient" +str(w3))   
         self.w1=w1
         self.w2=w2
         self.w3=w3
-    def Meam_accuraccy(self):
-        sum_cluster = sum(self.count_class_cluster)
-        mean_accuraccy = sum_cluster/self.label_count
-        print(np.amin(mean_accuraccy))
         
     def set_dict_cluster(self):
         for i in range(self.num_class):
@@ -158,11 +148,8 @@ class FCM1():
             ktra = np.less_equal(delta_V, Epsilon)
             if (np.all(ktra)):
                 break
-        print("\n------------------------------------\nKetqua\nV:")
-        print(self.V)
         self.count_class(self.num_class, c)
         self.external_validity(self.num_class, c)
-        self.Meam_accuraccy()
         return
     def thuat_toan_2_pha(self,epsilon,m,c,k1):
         self.set_c(c)
@@ -195,8 +182,6 @@ class FCM1():
             ktra = np.less_equal(delta_V, Epsilon)
             if (np.all(ktra)):
                 break
-        print("\n------------------------------------\nKetqua\nV:")
-        print(self.V)
         self.count_class(self.num_class, c)
         self.external_validity(self.num_class, c)
         self.rs_dict_cluster()
