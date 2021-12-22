@@ -2,7 +2,7 @@ import sys
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
-from FCM1 import FCM1
+from fcm1 import FCM1
 from PyQt5 import uic
 from fcm2 import FCM2
 
@@ -28,7 +28,7 @@ class MyWindowClass(QMainWindow):
     
     def __init__(self):
         super(MyWindowClass, self).__init__()
-        uic.loadUi("FCM application\main_window.ui", self)
+        uic.loadUi("FCM_application\main_window.ui", self)
         
         self.fcm1 = FCM1()
         self.fcm2 = FCM2()
@@ -43,18 +43,14 @@ class MyWindowClass(QMainWindow):
             self.data_path.setText(path)
             self.fcm1.read_data(path)
             self.fcm2.read_data(path)
-            model_x = TableModel(self.fcm1.X)
-            self.X_table.setModel(model_x)
+            model_data = TableModel(self.fcm1.data_table)
+            self.X_table.setModel(model_data)
             self.X_table.resizeColumnsToContents()
             
         except:
             self.error_dialog = QtWidgets.QErrorMessage()
             self.error_dialog.showMessage('Please choose a data set !')
     def caculate_cluster(self):
-        if (self.fcm1.X.all() == 0):
-            self.error_dialog = QtWidgets.QErrorMessage()
-            self.error_dialog.showMessage('Please choose a data set !')
-            return None
         
         if self.k_text.text() != '' and (self.c_text.text() != '') and (self.epsilon_text.text() != ''):
             k = int(self.k_text.text())

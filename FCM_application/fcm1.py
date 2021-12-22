@@ -25,6 +25,7 @@ class FCM1():
         self.label_data =self.label[self.label.columns[0]].values.tolist()
         self.label_count = np.array(self.label[self.label.columns[0]].value_counts())
         self.X = np.array(self.value)
+        self.data_table = np.array(self.data)
         self.n = self.X.shape[0]
         self.p = self.X.shape[1]
     
