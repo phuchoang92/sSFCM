@@ -17,15 +17,20 @@ class FCM1():
         
     def read_data(self, path):
         self.data = pd.read_csv(path , header = None)
-        self.value = self.data.select_dtypes(include=["float64", "int64"])
-        self.label = self.data.select_dtypes(exclude=["float64", "int64"])
+        self.data_table = np.array(self.data)
+    
+    def preprocess_data(self, col):
+        
+        self.value = self.data.loc[:,self.data.columns != col]
+        self.value = self.value.select_dtypes(include=["float64", "int64"])
+        self.label = self.data.loc[:, self.data.columns ==col]
+        
         self.label_list = pd.unique(self.label[self.label.columns[0]])
         self.label_list = self.label_list.tolist()
         self.num_class = len(self.label_list)
         self.label_data =self.label[self.label.columns[0]].values.tolist()
         self.label_count = np.array(self.label[self.label.columns[0]].value_counts())
         self.X = np.array(self.value)
-        self.data_table = np.array(self.data)
         self.n = self.X.shape[0]
         self.p = self.X.shape[1]
     
@@ -153,25 +158,12 @@ class FCM1():
         self.external_validity(self.num_class, c)
         return
     def thuat_toan_2_pha(self,epsilon,m,c,k1):
-        self.set_c(c)
-        self.generate_V()
-        V_temp = self.V
         # Pha 1 (Khong giam sat k1 = 0)
-        self.dict_cluster = {}
-        self.generate_U_ngang(0) 
-        Epsilon = np.zeros((c,self.p)) + epsilon
-        while True:
-            self.U= self.cong_thuc_6(m)
-            V_truoc = self.V
-            self.V= self.cong_thuc_4(m)
-            delta_V = abs(self.V- V_truoc)
-            ktra = np.less_equal(delta_V, Epsilon)
-            if (np.all(ktra)):
-                break
-        self.count_class(self.num_class, c)
+        self.thuat_toan_1_pha(epsilon,m,c,0)
         self.set_dict_cluster()  
+        
         #Pha 2(Co giam sat k1 = k1)
-        self.V = V_temp
+        Epsilon = np.zeros((c,self.p)) + epsilon
         self.generate_U_ngang(k1)
         while True:
             self.U= self.cong_thuc_6(m)

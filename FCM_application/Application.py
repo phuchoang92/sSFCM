@@ -2,10 +2,10 @@ import sys
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
+from numpy.lib.npyio import NpzFile
 from fcm1 import FCM1
 from PyQt5 import uic
 from fcm2 import FCM2
-
 
 class TableModel(QtCore.QAbstractTableModel):
 
@@ -50,8 +50,35 @@ class MyWindowClass(QMainWindow):
         except:
             self.error_dialog = QtWidgets.QErrorMessage()
             self.error_dialog.showMessage('Please choose a data set !')
+            
+    def preprocess_data(self):
+        if self.label_column.text()!='':
+            label_col = int(self.label_column.text()) -1
+            try:
+                self.fcm1.preprocess_data(label_col)
+                self.fcm2.preprocess_data(label_col) 
+                self.message = QtWidgets.QMessageBox()
+                self.message.setText("Column "+ str(label_col +1)+ " is label column ?")
+                self.message.show()
+            except:
+                self.error_dialog = QtWidgets.QErrorMessage()
+                self.error_dialog.showMessage('Please choose a column in range !')
+    def reset_view(self):
+        self.U_ngang_table_1.setModel(None)
+        self.U_table_1.setModel(None)
+        self.V_table_1.setModel(None)
+        self.U_ngang_table_2.setModel(None)
+        self.U_table_2.setModel(None)
+        self.V_table_2.setModel(None)
+        self.M_table_1.setModel(None)
+        self.U_table_3.setModel(None)
+        self.V_table_3.setModel(None)
+        self.M_table_2.setModel(None)
+        self.U_table_4.setModel(None)
+        self.V_table_4.setModel(None)
+        self.validity_table.clearContents()
     def caculate_cluster(self):
-        
+        self.reset_view()
         if self.k_text.text() != '' and (self.c_text.text() != '') and (self.epsilon_text.text() != ''):
             k = int(self.k_text.text())
             c = int(self.c_text.text())
@@ -97,7 +124,7 @@ class MyWindowClass(QMainWindow):
                     self.validity_table.setItem(2,2, QTableWidgetItem(str(round(self.fcm2.w3,4))))
                     
                     if self.check_2pha_algo2.isChecked():
-                        self.fcm2.thuat_toan_1_pha(value_of_M, value_of_M1, c, k, epsilon)
+                        self.fcm2.thuat_toan_2_pha(value_of_M, value_of_M1, c, k, epsilon)
                         viewTable(self.fcm2.M, self.M_table_2)
                         viewTable(self.fcm2.U, self.U_table_4)
                         viewTable(self.fcm2.V, self.V_table_4)
@@ -113,6 +140,7 @@ def viewTable(table, nameView):
     model = TableModel(table)
     nameView.setModel(model)
     nameView.resizeColumnsToContents()
+    
        
 def main():
     app = QApplication([])

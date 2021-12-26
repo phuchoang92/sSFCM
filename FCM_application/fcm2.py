@@ -15,8 +15,13 @@ class FCM2():
    
     def read_data(self, path):
         self.data = pd.read_csv(path , header = None)
-        self.value = self.data.select_dtypes(include=["float64", "int64"])
-        self.label = self.data.select_dtypes(exclude=["float64", "int64"])
+        self.data_table = np.array(self.data)
+    def preprocess_data(self, col):
+        
+        self.value = self.data.loc[:,self.data.columns != col]
+        self.value = self.value.select_dtypes(include=["float64", "int64"])
+        self.label = self.data.loc[:, self.data.columns ==col]
+        
         self.label_list = pd.unique(self.label[self.label.columns[0]])
         self.label_list = self.label_list.tolist()
         self.num_class = len(self.label_list)
@@ -158,24 +163,11 @@ class FCM2():
             
             
     def thuat_toan_2_pha(self,m,m1,c,k,epsilon):
-        self.setC(c)
-        self.generate_V(c)
-        V_temp= self.V
-        self.generate_U(c)
-        self.generate_M(m,m1,0,c)
-        Epsilon = np.zeros((self.c,self.p)) + epsilon
-        while True:
-            self.update_U(m,m1,c,epsilon)
-            self.V_truoc=self.V
-            self.V=self.update_V(c)
-            delta_V=abs(self.V-self.V_truoc)
-            ktra = np.less_equal(delta_V, Epsilon)
-            if (np.all(ktra)):
-                break
-        self.count_class(self.num_class, self.c)
+        #Pha 1
+        self.thuat_toan_1_pha(m,m1,c,0,epsilon)
         self.set_dict_cluster()     
-            #Pha 2
-        self.V = V_temp  
+            #Pha 2 
+        Epsilon = np.zeros((self.c,self.p)) + epsilon
         self.generate_M(m,m1,k,c)
         while True:
             self.update_U(m,m1,c,epsilon)
@@ -191,6 +183,11 @@ class FCM2():
 
 
 
-
-
+fcm2 = FCM2()
+fcm2.read_data("E:\BackKhoaBatDiet\Project1\sSFCM\Resources\iris.data")
+fcm2.preprocess_data(4)
+fcm2.thuat_toan_2_pha(2, 6, 3 , 150,1e-6)
+print(fcm2.w1)
+print(fcm2.w2)
+print(fcm2.w3)
 
