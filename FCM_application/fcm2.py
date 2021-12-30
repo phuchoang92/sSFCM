@@ -1,3 +1,4 @@
+from typing_extensions import final
 import pandas as pd
 import numpy as np
 import math
@@ -16,11 +17,12 @@ class FCM2():
     def read_data(self, path):
         self.data = pd.read_csv(path , header = None)
         self.data_table = np.array(self.data)
-    def preprocess_data(self, col):
+    def preprocess_data(self, col_label, col_begin, row_begin):
         
-        self.value = self.data.loc[:,self.data.columns != col]
+        self.value = self.data.loc[:,self.data.columns != col_label]
+        self.value = self.value.loc[row_begin:,self.value.columns >= col_begin]
         self.value = self.value.select_dtypes(include=["float64", "int64"])
-        self.label = self.data.loc[:, self.data.columns ==col]
+        self.label = self.data.loc[:, self.data.columns ==col_label]
         
         self.label_list = pd.unique(self.label[self.label.columns[0]])
         self.label_list = self.label_list.tolist()
@@ -30,6 +32,10 @@ class FCM2():
         self.X = np.array(self.value)
         self.n = self.X.shape[0]
         self.p = self.X.shape[1]
+        
+        self.final_data = self.value
+        self.final_data[''] = self.label
+        self.final_data_table = np.array(self.final_data)
 
     def setC(self, i):
         self.c = i
@@ -63,7 +69,7 @@ class FCM2():
         vp = pow(1/(m1*d_ik*d_ik),1/(m1-1))
         vt = -1
         left = 0.0
-        right = 2.0
+        right = 3.0
         while (abs(vt-vp) > epsilon):
             mu = (right + left)/2
             vt = mu/pow(mu + sum_mu_i, (m1-m)/(m1-1))  
@@ -184,9 +190,10 @@ class FCM2():
 
 
 fcm2 = FCM2()
-fcm2.read_data("E:\BackKhoaBatDiet\Project1\sSFCM\Resources\iris.data")
-fcm2.preprocess_data(4)
+fcm2.read_data("E:\BackKhoaBatDiet\Project1\sSFCM\Resources\glass.data")
+fcm2.preprocess_data(10,1,0)
 fcm2.thuat_toan_2_pha(2, 6, 3 , 150,1e-6)
+print(fcm2.final_data)
 print(fcm2.w1)
 print(fcm2.w2)
 print(fcm2.w3)

@@ -1,3 +1,4 @@
+
 import sys
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import *
@@ -46,20 +47,26 @@ class MyWindowClass(QMainWindow):
             model_data = TableModel(self.fcm1.data_table)
             self.X_table.setModel(model_data)
             self.X_table.resizeColumnsToContents()
-            
+            self.begin_col.setText("1")
+            self.begin_row.setText("1")
         except:
             self.error_dialog = QtWidgets.QErrorMessage()
             self.error_dialog.showMessage('Please choose a data set !')
             
     def preprocess_data(self):
-        if self.label_column.text()!='':
+        if self.label_column.text()!='' and self.begin_col.text()!='' and self.begin_row.text()!='':
             label_col = int(self.label_column.text()) -1
+            begin_col = int (self.begin_col.text()) -1
+            begin_row = int (self.begin_row.text()) -1
+            
             try:
-                self.fcm1.preprocess_data(label_col)
-                self.fcm2.preprocess_data(label_col) 
+                self.fcm1.preprocess_data(label_col, begin_col, begin_row)
+                self.fcm2.preprocess_data(label_col, begin_col, begin_row) 
                 self.message = QtWidgets.QMessageBox()
                 self.message.setText("Column "+ str(label_col +1)+ " is label column ?")
                 self.message.show()
+                self.X_table.setModel(None)
+                viewTable(self.fcm1.final_data_table, self.X_table)
             except:
                 self.error_dialog = QtWidgets.QErrorMessage()
                 self.error_dialog.showMessage('Please choose a column in range !')
