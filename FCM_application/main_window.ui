@@ -275,7 +275,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Algorithm 1</string>
+      <string>sSFCM</string>
      </property>
     </widget>
     <widget class="QCheckBox" name="algo2_check">
@@ -288,7 +288,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Algorithm 2</string>
+      <string>sSMC-FCM</string>
      </property>
     </widget>
     <widget class="QCheckBox" name="check_2pha_algo2">
@@ -336,21 +336,21 @@
     <widget class="QLabel" name="label_6">
      <property name="geometry">
       <rect>
-       <x>290</x>
-       <y>60</y>
-       <width>61</width>
+       <x>300</x>
+       <y>50</y>
+       <width>121</width>
        <height>21</height>
       </rect>
      </property>
      <property name="text">
-      <string>Label column</string>
+      <string>Cột chứa nhãn dữ liệu</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="label_column">
      <property name="geometry">
       <rect>
-       <x>360</x>
-       <y>60</y>
+       <x>330</x>
+       <y>70</y>
        <width>51</width>
        <height>20</height>
       </rect>
@@ -507,22 +507,22 @@
      </row>
      <column>
       <property name="text">
-       <string>Algorithm1(1pha)</string>
+       <string>sSFCM(1pha)</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Algorithm1(2pha)</string>
+       <string>sSFCM(2pha)</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Algorithm2(1pha)</string>
+       <string>sSMC-FCM(1pha)</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Algorithm2(2pha)</string>
+       <string>sSMC-FCM(2pha)</string>
       </property>
      </column>
      <item row="0" column="0">
@@ -565,7 +565,7 @@
     </property>
     <widget class="QWidget" name="tab_4">
      <attribute name="title">
-      <string>Algorithm 1</string>
+      <string>sSFCM</string>
      </attribute>
      <widget class="QTabWidget" name="tabWidget_2">
       <property name="geometry">
@@ -622,7 +622,7 @@
     </widget>
     <widget class="QWidget" name="tab_5">
      <attribute name="title">
-      <string>Algorithm 2</string>
+      <string>sSMC-FCM</string>
      </attribute>
      <widget class="QTabWidget" name="tabWidget_3">
       <property name="geometry">
@@ -692,7 +692,7 @@
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
-      <string>Algorithm1</string>
+      <string>sSFCM</string>
      </attribute>
      <widget class="QTabWidget" name="tab_17">
       <property name="geometry">
@@ -782,7 +782,7 @@
     </widget>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
-      <string>Algorithm2</string>
+      <string>sSMC-FCM</string>
      </attribute>
      <widget class="QTabWidget" name="tab_18">
       <property name="geometry">
