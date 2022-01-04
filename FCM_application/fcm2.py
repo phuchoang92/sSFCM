@@ -96,7 +96,6 @@ class FCM2():
                 for j in range(self.c):
                     if (self.M[i][j]==m1):
                         mu_i[j] = self.solve_mu(sum_mu_i, d_i[j], m, m1 , epsilon)
-                        # mu_i[j] = sum_mu_i
                         
                 self.U[i] = mu_i/sum(mu_i)
     def update_V(self,c):
@@ -189,12 +188,4 @@ class FCM2():
 
 
 
-fcm2 = FCM2()
-fcm2.read_data("E:\BackKhoaBatDiet\Project1\sSFCM\Resources\glass.data")
-fcm2.preprocess_data(10,1,0)
-fcm2.thuat_toan_2_pha(2, 6, 3 , 150,1e-6)
-print(fcm2.final_data)
-print(fcm2.w1)
-print(fcm2.w2)
-print(fcm2.w3)
 
