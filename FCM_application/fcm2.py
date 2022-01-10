@@ -39,7 +39,7 @@ class FCM2():
 
     def setC(self, i):
         self.c = i
-    def generate_M(self,m,m1,k,c):
+    def generate_M(self,m,m1,k):
         self.M = np.zeros((self.n,self.c))
         self.index_x_giamsat = random.sample(range(self.n),k)
         index_x_giamsat = np.sort(self.index_x_giamsat)
@@ -57,19 +57,23 @@ class FCM2():
     def generate_V(self,c):
         self.V=np.random.rand(self.c,self.p)
         self.V_truoc=self.V
+        return
     def generate_U(self,c):
         self.U=np.zeros((self.n,self.c))
+        return
     def update_D(self,n,c):
         self.D=np.zeros((self.n,self.c))
         for i in range(self.n):
             for k in range(self.c):
                 self.D[i][k]=math.sqrt(sum(pow(self.X[i]-self.V[k],2)))
+        return
     def solve_mu(self,sum_mu_i,d_ik,m,m1,epsilon):
+        epsilon = epsilon/1000
         mu = 0
         vp = pow(1/(m1*d_ik*d_ik),1/(m1-1))
         vt = -1
         left = 0.0
-        right = 3.0
+        right = 1.0
         while (abs(vt-vp) > epsilon):
             mu = (right + left)/2
             vt = mu/pow(mu + sum_mu_i, (m1-m)/(m1-1))  
@@ -77,12 +81,14 @@ class FCM2():
                 left = mu
             else:
                 right =mu
+            if abs(mu - (right + left)/2) <=epsilon:
+                break
         return mu
-    def update_U(self,m,m1,c,epsilon):
-        self.update_D(self.n,c)
+    def update_U(self,m,m1,epsilon):
+        self.update_D(self.n,self.c)
         for i in range(self.n):
             if i not in self.index_x_giamsat:
-                for k in range(c):
+                for k in range(self.c):
                     mau_so = sum(pow( self.D[i][k] / self.D[i], 2/(m-1)))
                     self.U[i][k] = 1/mau_so
             elif i in self.index_x_giamsat:
@@ -98,7 +104,8 @@ class FCM2():
                         mu_i[j] = self.solve_mu(sum_mu_i, d_i[j], m, m1 , epsilon)
                         
                 self.U[i] = mu_i/sum(mu_i)
-    def update_V(self,c):
+        return
+    def update_V(self):
         V_temp=np.zeros((self.c,self.p))
         for k in range(self.c):
             temp=pow((self.U.T)[k],(self.M.T)[k])
@@ -113,6 +120,7 @@ class FCM2():
             k_class = self.label_list.index(self.label_data[k])
             index_max = np.argmax(self.U[k])
             self.count_class_cluster[k_class][index_max] +=1 
+        return
     def external_validity(self,num_class, c):
         
         a1 = b1 = c1 = d1= 0
@@ -136,7 +144,7 @@ class FCM2():
         self.w1=w1
         self.w2=w2
         self.w3=w3
-        
+        return
         
     def set_dict_cluster(self):
         for i in range(self.num_class):
@@ -154,17 +162,18 @@ class FCM2():
         self.generate_U(c)
         Epsilon = np.zeros((self.c,self.p)) + epsilon
         self.rs_dict_cluster()
-        self.generate_M(m,m1,k,c)
+        self.generate_M(m,m1,k)
         while True:
-            self.update_U(m,m1,c,epsilon)
+            self.update_U(m,m1,epsilon)
             self.V_truoc=self.V
-            self.V=self.update_V(c)
+            self.V=self.update_V()
             delta_V=abs(self.V-self.V_truoc)
             ktra = np.less_equal(delta_V, Epsilon)
             if (np.all(ktra)):
                 break
         self.count_class(self.num_class, self.c)
         self.external_validity(self.num_class, self.c)       
+        return
             
             
     def thuat_toan_2_pha(self,m,m1,c,k,epsilon):
@@ -173,11 +182,11 @@ class FCM2():
         self.set_dict_cluster()     
             #Pha 2 
         Epsilon = np.zeros((self.c,self.p)) + epsilon
-        self.generate_M(m,m1,k,c)
+        self.generate_M(m,m1,k)
         while True:
-            self.update_U(m,m1,c,epsilon)
+            self.update_U(m,m1,epsilon)
             self.V_truoc=self.V
-            self.V=self.update_V(c)
+            self.V=self.update_V()
             delta_V=abs(self.V-self.V_truoc)
             ktra = np.less_equal(delta_V, Epsilon)
             if (np.all(ktra)):
@@ -185,7 +194,15 @@ class FCM2():
         self.count_class(self.num_class, self.c)
         self.external_validity(self.num_class, self.c)     
         return
-
-
+    def freeMemory(self):
+        self.U = None
+        self.M = None
+        self.c = None
+        self.dict_cluster = None
+        self.index_x_giamsat = None
+        self.V = None
+        self.D = None
+        self.V_truoc = None
+        return
 
 

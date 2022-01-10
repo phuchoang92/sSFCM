@@ -185,3 +185,11 @@ class FCM1():
         self.external_validity(self.num_class, c)
         self.rs_dict_cluster()
         return
+    
+    def freeMemory(self):
+        self.U = None
+        self.U_ngang = None
+        self.c = None
+        self.dict_cluster = None
+        self.index_x_giamsat = None
+        self.V = None

@@ -142,6 +142,8 @@ class MyWindowClass(QMainWindow):
                 except:
                     self.error_dialog = QtWidgets.QErrorMessage()
                     self.error_dialog.showMessage('Please fill all input of Algorithm 2!')  
+        self.fcm1.freeMemory()
+        self.fcm2.freeMemory()
             
 def viewTable(table, nameView):
     model = TableModel(table)
