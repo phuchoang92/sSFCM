@@ -7,7 +7,7 @@ Semi-Supervised Fuzzy C-means Clustering
 
 pip install -r requirement.txt
 
-# run programe
+# run program
 
 run file FCM_application/Application.py
 
